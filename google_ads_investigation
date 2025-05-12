@@ -6,6 +6,9 @@ case
   when date between "2025-05-01" and "2025-05-07" then "test_week"
   when date between "2025-04-03" and "2025-04-09" then "mom_week"
   when date between "2024-05-01" and "2024-05-07" then "yoy_week"
+  when date between "2025-02-28" and "2025-03-05" then "march_week"
+  when date between "2025-01-30" and "2025-02-05" then "feb_week"
+  when date between "2025-01-02" and "2025-01-08" then "jan_week"
 end as week_investigation,
 safe_divide(sum(weighted_average_position * organic_impressions) ,sum(organic_impressions) ) as weighted_average_position,
 SUM(organic_clicks) AS organic_clicks,
