@@ -1,0 +1,40 @@
+with data as 
+(
+select
+case
+  when date between "2025-05-01" and "2025-05-07" then "test_week"
+  when date between "2025-04-03" and "2025-04-09" then "mom_week"
+  when date between "2024-05-01" and "2024-05-07" then "yoy_week"
+end as week_investigation,
+query,
+safe_divide(sum(weighted_average_position * organic_impressions) ,sum(organic_impressions) ) as weighted_average_position,
+SUM(organic_clicks) AS organic_clicks,
+SAFE_DIVIDE(SUM(organic_clicks), SUM(organic_impressions)) AS organic_ctr,
+SUM(est_organic_revenue) AS estimated_organic_revenue,
+SUM(ppc_clicks) AS ppc_clicks,
+SAFE_DIVIDE(SUM(ppc_clicks), SUM(ppc_impressions)) AS ppc_ctr,
+SUM(ppc_spend) AS ppc_spend,
+SUM(ppc_revenue) AS ppc_revenue,
+sum(ppc_spend) - sum(ppc_revenue) as spend_minus_rev
+from `tpw-data-warehouse.data_marts.paid_and_organic_search_revenue_by_query`
+where 1=1 
+and query in (
+  "meal replacement shakes for weight loss", "diet meal replacement", "best meal replacement shakes for weight loss",
+  "best meal replacement shakes uk for weight loss", "meal replacement powder", "protein meal replacement",
+  "best meal replacement shakes", "meal replacement", "vegan meal replacement",
+  "best weight loss meal replacement shakes", "vegan meal replacement shakes", "meal replacement shake",
+  "meal replacement shakes uk", "meal replacement protein", "protein shake meal replacement",
+  "creatine monohydrate", "creatine powder", "monohydrate creatine",
+  "creapure creatine", "Creatine for Women", "greens powder",
+  "supergreens", "super greens", "green powder",
+  "supergreens powder", "greens shake", "greens superfood",
+  "daily greens"
+)
+and site_url like '%www.%'
+
+
+group by week_investigation , query 
+)
+
+select * 
+from data where week_investigation is not null
