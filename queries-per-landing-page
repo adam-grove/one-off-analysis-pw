@@ -1,0 +1,29 @@
+WITH
+  search_console_by_query_ranked AS (
+    SELECT
+      date,
+      CASE
+        WHEN site_url LIKE '%de.%' THEN "DE"
+        WHEN site_url LIKE '%fr.%' THEN "FR"
+        WHEN site_url LIKE '%it.%' THEN "IT"
+        WHEN site_url LIKE '%ie.%' THEN "IE"
+        WHEN site_url LIKE '%www.%' THEN "UK"
+      END AS extracted_country,
+      CONCAT("/", REGEXP_EXTRACT(page, r'^(?:[^/]*/){3}(.*)')) AS extracted_part,
+      query, -- Added query here
+      position,
+      impressions,
+      clicks,
+      RANK() OVER (PARTITION BY date, site_url, page ORDER BY impressions DESC) AS rank
+    FROM
+      `data_lake.google_search_console_data_by_page_by_query`
+  )
+
+
+select 
+count(distinct query) as query,
+sum(clicks) / sum(impressions) as ctr
+from search_console_by_query_ranked
+where extracted_country = "UK" and extracted_part = "/vegan-protein"
+and date between "2025-01-01" and "2025-05-26"
+group by extracted_part
