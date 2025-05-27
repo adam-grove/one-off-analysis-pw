@@ -21,7 +21,8 @@ WITH
 
 
 select 
-count(distinct query) as query,
+extracted_part as page,
+count(distinct query) as queries,
 sum(clicks) / sum(impressions) as ctr
 from search_console_by_query_ranked
 where extracted_country = "UK" and extracted_part = "/vegan-protein"
